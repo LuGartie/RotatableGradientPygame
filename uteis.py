@@ -2,7 +2,7 @@ import pygame
 
 def gradienteRotavel(
         tela,                       # Window to draw
-        cores,                      # Tuple of two colors (xxx,xxx,xxx) )
+        cores,                      # Tuple of two colors rgba
         rotacao,                    # angle of rotation in degrees
         altura,                     # height of gratient considering 0 degrees
         largura,                    # width of gratient considering 0 degrees
@@ -18,20 +18,22 @@ def gradienteRotavel(
     rate = (
         float(cores[0][0]-cores[1][0])/altura,
         float(cores[0][1]-cores[1][1])/altura,
-        float(cores[0][2]-cores[1][2])/altura
+        float(cores[0][2]-cores[1][2])/altura,
+        float(cores[0][3]-cores[1][3])/altura
     )
-
+    quadro = pygame.Surface(tela.size,pygame.SRCALPHA)
     for l in range(altura):
         color = (                                       # 
                 min(max(cores[1][0]+(rate[0]*(l)),0),255),    # 
                 min(max(cores[1][1]+(rate[1]*(l)),0),255),    # 
-                min(max(cores[1][2]+(rate[2]*(l)),0),255)     # 
+                min(max(cores[1][2]+(rate[2]*(l)),0),255),    # 
+                min(max(cores[1][3]+(rate[3]*(l)),0),255)     # 
             )
         p1 = pygame.Vector2(-largura/2+eixo.x,l-altura/2+eixo.y)
         p2 = pygame.Vector2(+largura/2+eixo.x,l-altura/2+eixo.y)
         linha = [p.rotate(rotacao)+centro+eixo for p in [p1,p2]]
-        pygame.draw.polygon(tela, color, linha, width=3)
-
+        pygame.draw.polygon(quadro, color, linha, width=3)
+    tela.blit(quadro,(0,0))
 # A test for gradienteRotavel. It creates a gradient square in the middle of screen that rotates around its on center.
 '''
 tela = pygame.display.set_mode((500,500))
@@ -50,8 +52,8 @@ while running:
     gradienteRotavel(
         tela=screen,
         cores=(
-            (0,0,255),
-            (255,0,0)
+            (0,0,255,255),
+            (255,0,0,128)
         ),
         eixo=pygame.Vector2(0,0),
         centro=pygame.Vector2(250,250),
